@@ -4,15 +4,18 @@ import os
 from termcolor import colored
 import re
 import urllib.request
-import argv from sys
+import sys
 
 # clear the CLI
 os.system("clear")
+raw_film = str()
+test = ' '
+try:
+    raw_film = test.join(sys.argv[1:])
+except IndexError:
+    raw_film = "interstellar 2014"
 
 url = "https://google.com/search?hl=en&gl=en&q="
-raw_film = input("What film do you want to download?\nHint: better if you put the film\'s full name and the year it was released on. - Example: \"interstellar 2014\".\n")
-if raw_film == "":
-    raw_film = "interstellar 2014"
 
 print('\nSearching for the film "{}"...'.format(raw_film))
 token = raw_film + " film"
@@ -24,7 +27,7 @@ soup = BeautifulSoup(html_page, 'html.parser')
 try:
     film = soup.find_all("div", {"class": "BNeawe deIvCb AP7Wnd"})[0].text
     details = (soup.find_all("div", {"class": "BNeawe tAd8D AP7Wnd"})[
-               0].text).split(" ‧ ")
+        0].text).split(" ‧ ")
     year = details[0]
     full_film = str(film) + ", " + str(year)
 except:
@@ -33,7 +36,7 @@ except:
 try:
     z = int(year)
 except:
-    print(colored("Specific film not found on Google. Try putting the film's number from its series. - Example: \"How to train your dragon 1\".", "red"))
+    print(colored("Specific film not found on Google. Try putting the film's number from its series. - Example: \"The Expendables 2\".", "red"))
     exit()
 
 ans = input("Is {} the film you're looking for?\n[(y)es / (n)o / see (d)etails]: ".format(
@@ -63,7 +66,8 @@ elif ans == "d":
             "Try repeating the search using the film's full name and/or its release date.", "red"))
         exit()
 else:
-    print(colored("Try repeating the search using the film's full name and/or its release date.", "red"))
+    print(colored(
+        "Try repeating the search using the film's full name and/or its release date.", "red"))
     exit()
 
 # print(full_film)
@@ -82,6 +86,7 @@ sizes = [sizes for sizes in downloads if "Download " in sizes]
 if len(torrents) == 0 and len(sizes) == 0:
     empty = True
     print(colored("\nFilm not found on YTS!", "red"))
+    exit()
 else:
     empty = False
 n = 0
@@ -98,20 +103,23 @@ while not empty:
     try:
         ans = int(ans)
     except:
-        print(colored("Not a number. You must select a number that's on the list.", "red"))
+        print(
+            colored("Not a number. You must select a number that's on the list.", "red"))
         continue
     if ans < n:
         break
     else:
-        print(colored("Out of range. You must select a number that's on the list.", "red"))
+        print(
+            colored("Out of range. You must select a number that's on the list.", "red"))
 
 try:
-    path = "/home/abdo/Downloads"
+    path = "/home/abdo/Downloads/torrents/"
     torrent = "https://yst.am" + torrents[ans]
     print("Got torrent's URL: " + colored(torrent, "green"))
 
     user_opinion = input(
         "Open and download torrent now?\n[(y)es / (n)o]: ")
+
     if user_opinion == "y":
         try:
             urllib.request.urlretrieve(
@@ -122,13 +130,15 @@ try:
         try:
             # Open torrent file with appropriate software
             os.system("xdg-open {}.torrent".format(path + full_film))
+
+            # pass
         except:
             print(colored(
                 "Error while opening the torrent. However, it has been saved in " + path, "red"))
+
     else:
         print('Nothing changed.')
         exit()
-
 
 except:
     print(colored("Torrent error. Nothing changed.", "red"))
